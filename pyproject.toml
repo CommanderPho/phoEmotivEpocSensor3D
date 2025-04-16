@@ -1,7 +1,7 @@
 [project]
 name = "phoemotivepocsensor3d"
 version = "0.1.0"
-description = "Add your description here"
+description = "Uses LabStreamingLayer (LSL) to recieve incoming EEG signal quality information for each of the headset sensor pads and renders them on a 3D model of the headset"
 readme = "README.md"
 requires-python = ">=3.9.13"
 dependencies = [
@@ -9,4 +9,11 @@ dependencies = [
     "pathlib>=1.0.1",
     "pylsl>=1.17.6",
     "vispy>=0.14.3",
+    "trimesh>=3.20.0",
+    "pyglet>=2.0.0",
+    "numpy>=1.24.0",
+    "pyassimp>=5.2.5",
+    "pyqt6>=6.9.0",
+    "qtpy>=2.4.3",
+    "pillow>=11.2.1",
 ]
