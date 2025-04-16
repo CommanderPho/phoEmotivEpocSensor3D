@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: phoemotivepocsensor3d
+Version: 0.1.0
+Summary: Uses LabStreamingLayer (LSL) to recieve incoming EEG signal quality information for each of the headset sensor pads and renders them on a 3D model of the headset
+Requires-Python: >=3.9.13
+Description-Content-Type: text/markdown
+Requires-Dist: ipykernel>=6.29.5
+Requires-Dist: pathlib>=1.0.1
+Requires-Dist: pylsl>=1.17.6
+Requires-Dist: vispy>=0.14.3
+Requires-Dist: trimesh>=3.20.0
+Requires-Dist: pyglet>=2.0.0
+Requires-Dist: numpy>=1.24.0

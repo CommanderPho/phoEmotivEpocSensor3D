@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+phoemotivepocsensor3d.egg-info/PKG-INFO
+phoemotivepocsensor3d.egg-info/SOURCES.txt
+phoemotivepocsensor3d.egg-info/dependency_links.txt
+phoemotivepocsensor3d.egg-info/requires.txt
+phoemotivepocsensor3d.egg-info/top_level.txt

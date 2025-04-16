@@ -17,4 +17,5 @@ dependencies = [
     "qtpy>=2.4.3",
     "pillow>=11.2.1",
     "dvc[gdrive]>=3.59.1",
+    "meshcat>=0.3.2",
 ]

@@ -1,0 +1,7 @@
+ipykernel>=6.29.5
+pathlib>=1.0.1
+pylsl>=1.17.6
+vispy>=0.14.3
+trimesh>=3.20.0
+pyglet>=2.0.0
+numpy>=1.24.0
