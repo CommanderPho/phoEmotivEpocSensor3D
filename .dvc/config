@@ -1,0 +1,4 @@
+[core]
+    remote = phopersonalgdrive
+['remote "phopersonalgdrive"']
+    url = gdrive://1A5KUQRjGYsvfvhbbvNERlAHXR0F069P7/dvcstore
