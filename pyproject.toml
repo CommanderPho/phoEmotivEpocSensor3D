@@ -1,0 +1,12 @@
+[project]
+name = "phoemotivepocsensor3d"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9.13"
+dependencies = [
+    "ipykernel>=6.29.5",
+    "pathlib>=1.0.1",
+    "pylsl>=1.17.6",
+    "vispy>=0.14.3",
+]
