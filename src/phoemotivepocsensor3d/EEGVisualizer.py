@@ -71,6 +71,10 @@ electrode_name_to_position_center = {
  }
 
 
+default_camera_pos = [(0.43777926837279874, 0.26995096452573575, -0.34661171636659727),
+ (0.0, 0.02532198280096054, -0.03493778593838215),
+ (-0.4055826038530254, -0.3500002111406305, -0.8443948150322302)]
+
 
 class EEGVisualizer:
     """ 
@@ -102,7 +106,7 @@ class EEGVisualizer:
             ## use pyqt to display in a separate window
             # pv.set_jupyter_backend('trame')  # Use static backend for compatibility
             # self.plotter = pv.Plotter()
-            self.multi_plotter = pvqt.MultiPlotter(nrows=1, ncols=1, show=False, title='Muliplotter', toolbar=False, menu_bar=False, editor=False)
+            self.multi_plotter = pvqt.MultiPlotter(nrows=1, ncols=1, show=False, title='Muliplotter', toolbar=True, menu_bar=True, editor=True)
             self.plotter = self.multi_plotter[0, 0] #.add_mesh(pv.Sphere())
 
         # Load the 3D model
@@ -143,7 +147,7 @@ class EEGVisualizer:
                 if name in self.electrode_name_to_position_center:
                     # Create a sphere at the electrode position
                     position = self.electrode_name_to_position_center[name]
-                    sphere = pv.Sphere(radius=0.01, center=position)
+                    sphere = pv.Sphere(radius=0.005, center=position)
                     sphere.name = name
                     # Add the sphere to the plotter with a name
                     self.electrodes[name] = sphere
@@ -164,6 +168,9 @@ class EEGVisualizer:
         # Create interactive widgets
         if self.is_notebook:
             self.create_widgets()
+
+        ## set default camera position
+        self.plotter.camera_position = default_camera_pos
 
 
     def create_widgets(self):
