@@ -1,6 +1,7 @@
 from copy import deepcopy
 import numpy as np
 import pyvista as pv
+import pyvistaqt as pvqt
 import time
 import sys
 import random
@@ -8,16 +9,15 @@ import queue
 from pathlib import Path
 import ipywidgets as widgets
 from IPython.display import display, clear_output
-
+# import panel
 
 """
 uv venv ./.venv_viz --python=3.9
 .\.venv_viz\Scripts\activate
 
 """
-
 # Create a queue for EEG data
-tasks = queue.Queue()
+# tasks = queue.Queue()
 
 # Electrode names (adjust based on your headset)
 electrode_names = ['AF3', 'AF4', 'AuxCMS', 'AuxDRL', 'CMS', 'DRL', 'F3', 'F4', 'F7', 'F8', 'FC5', 'FC6', 'O1', 'O2', 'P7', 'P8', 'T7', 'T8']
@@ -75,7 +75,7 @@ electrode_name_to_position_center = {
 class EEGVisualizer:
     """ 
     
-    from EXAMPLES.example_animated_3D_sensor_quality import EEGVisualizer
+    from src.phoemotivepocsensor3d.EEGVisualizer import EEGVisualizer
 
     
     """
@@ -92,15 +92,18 @@ class EEGVisualizer:
         """
         self.update_interval = update_interval
         self.running = False
-        
+        self.is_notebook = False
+
         # Set up PyVista visualization for Jupyter
-        if is_notebook:
+        if self.is_notebook:
             pv.set_jupyter_backend('trame')  # Use static backend for compatibility
             self.plotter = pv.Plotter(notebook=True)
         else:
             ## use pyqt to display in a separate window
             # pv.set_jupyter_backend('trame')  # Use static backend for compatibility
-            self.plotter = pv.Plotter()
+            # self.plotter = pv.Plotter()
+            self.multi_plotter = pvqt.MultiPlotter(nrows=1, ncols=1, show=False, title='Muliplotter', toolbar=False, menu_bar=False, editor=False)
+            self.plotter = self.multi_plotter[0, 0] #.add_mesh(pv.Sphere())
 
         # Load the 3D model
         if model_path is None:
@@ -156,12 +159,13 @@ class EEGVisualizer:
             self.plotter.add_mesh(electrode, color='yellow', name=name)
         
         # Add a title
-        self.plotter.add_text("EEG Electrode Quality Visualization\nRed = Poor Quality, Green = Good Quality", 
-                              position="upper_left", font_size=12, color='white')
+        self.plotter.add_text("EEG Electrode Quality Visualization\nRed = Poor Quality, Green = Good Quality", position="upper_left", font_size=12, color='white')
         
         # Create interactive widgets
-        self.create_widgets()
-        
+        if self.is_notebook:
+            self.create_widgets()
+
+
     def create_widgets(self):
         """Create interactive widgets for the visualization"""
         # Create sliders for each electrode
@@ -307,29 +311,34 @@ class EEGVisualizer:
         This creates a new plot each time instead of updating in-place
         """
         # Create a new plotter
-        plotter = pv.Plotter(notebook=True)
+        # plotter = pv.Plotter(notebook=True)
+        self.plotter.clear()
         
         # Add the headset
-        plotter.add_mesh(self.headset, color='lightgray')
+        self.plotter.add_mesh(self.headset, color='lightgray')
         
         # Add electrodes with updated colors
         for i, name in enumerate(electrode_names):
             if i < len(quality_values) and name in self.electrodes:
                 quality = quality_values[i]
                 color = [1-quality, quality, 0]  # R,G,B
-                plotter.add_mesh(self.electrodes[name], color=color)
+                self.plotter.add_mesh(self.electrodes[name], color=color)
         
         # Add title
-        plotter.add_text("EEG Electrode Quality Visualization\nRed = Poor Quality, Green = Good Quality", 
-                         position="upper_left", font_size=12, color='white')
+        self.plotter.add_text("EEG Electrode Quality Visualization\nRed = Poor Quality, Green = Good Quality", position="upper_left", font_size=12, color='white')
         
         # Display the updated plot
-        with self.output:
-            clear_output(wait=True)
-            display(plotter.show(jupyter_backend='static'))
-            quality_str = ", ".join([f"{name}: {quality:.2f}" for name, quality in zip(electrode_names, quality_values)])
+        quality_str = ", ".join([f"{name}: {quality:.2f}" for name, quality in zip(electrode_names, quality_values)])
+
+        if self.is_notebook:
+            with self.output:
+                clear_output(wait=True)
+                display(self.plotter.show(jupyter_backend='static'))
+                print(f"Quality values: {quality_str}")
+        else:
             print(f"Quality values: {quality_str}")
-    
+
+
     def generate_random_quality(self):
         """Generate random quality values for testing"""
         return [random.uniform(0, 1) for _ in range(len(electrode_names))]
@@ -337,20 +346,24 @@ class EEGVisualizer:
     def show(self):
         """Display the visualization and widgets in the notebook"""
         # Initial visualization
-        # plot_widget = self.plotter.show(jupyter_backend='static')
-        plot_widget = self.plotter.show(jupyter_backend='trame', return_viewer=True)
+        if self.is_notebook:
+            # plot_widget = self.plotter.show(jupyter_backend='static')
+            plot_widget = self.plotter.show(jupyter_backend='trame', return_viewer=True)
 
-        # Create dashboard
-        dashboard = widgets.VBox([
-            plot_widget,
-            self.control_box,
-            self.output
-        ])
-        display(dashboard)
-        
-        # Show initial quality values
-        with self.output:
-            print("Ready. Adjust sliders or click buttons to update visualization.")
+            # Create dashboard
+            dashboard = widgets.VBox([
+                plot_widget,
+                self.control_box,
+                self.output
+            ])
+            display(dashboard)
+            
+            # Show initial quality values
+            with self.output:
+                print("Ready. Adjust sliders or click buttons to update visualization.")
+        else:
+            ## non-notebook widget mode (pyqt)
+            self.multi_plotter.show()
 
 
 # Run the visualizer
